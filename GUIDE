@@ -123,17 +123,14 @@ bool IsValidUserNumber(const string& number, const string& userType) {
 
 void StudentMenu() {
     cout << "Student Menu Placeholder\n";
-    // Implement student-specific functionalities here
 }
 
 void TeacherMenu() {
     cout << "Teacher Menu Placeholder\n";
-    // Implement teacher-specific functionalities here
 }
 
 void AdminMenu() {
     cout << "Admin Menu Placeholder\n";
-    // Implement admin-specific functionalities here
 }
 
 
