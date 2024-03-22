@@ -1,0 +1,138 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Guest {
+private:
+    string name;
+    int age;
+public:
+    Guest(string n, int a) : name(n), age(a) {}
+    string getName() const { return name; }
+    int getAge() const { return age; }
+};
+
+class Room {
+private:
+    int number;
+    bool occupied;
+    Guest* guest;
+public:
+    Room() : number(0), occupied(false), guest(nullptr) {}
+    Room(int num) : number(num), occupied(false), guest(nullptr) {}
+    int getNumber() const { return number; }
+    bool isOccupied() const { return occupied; }
+    Guest* getGuest() const { return guest; }
+    void checkIn(Guest* g) {
+        if (!occupied) {
+            guest = g;
+            occupied = true;
+            cout << "Checked in guest: " << g->getName() << " into room " << number << endl;
+        } else {
+            cout << "Room " << number << " is already occupied\n";
+        }
+    }
+    void checkOut() {
+        if (occupied) {
+            cout << "Checked out guest: " << guest->getName() << " from room " << number << endl;
+            guest = nullptr;
+            occupied = false;
+        } else {
+            cout << "Room " << number << " is already vacant\n";
+        }
+    }
+};
+
+class Hotel {
+private:
+    Room* rooms;
+    int numRooms;
+public:
+    Hotel(int num) : numRooms(num) {
+        rooms = new Room[numRooms];
+        for (int i = 0; i < numRooms; ++i) {
+            rooms[i] = Room(i + 1); // Room numbers start from 1
+        }
+    }
+    ~Hotel() {
+        delete[] rooms;
+    }
+    void displayRooms() const {
+        cout << "Hotel Rooms:\n";
+        for (int i = 0; i < numRooms; ++i) {
+            cout << "Room " << rooms[i].getNumber() << ": ";
+            if (rooms[i].isOccupied()) {
+                cout << "Occupied by " << rooms[i].getGuest()->getName() << " (Age: " << rooms[i].getGuest()->getAge() << ")" << endl;
+            } else {
+                cout << "Vacant\n";
+            }
+        }
+    }
+    void checkIn(int roomNumber, Guest* guest) {
+        if (roomNumber >= 1 && roomNumber <= numRooms) {
+            rooms[roomNumber - 1].checkIn(guest);
+        } else {
+            cout << "Invalid room number\n";
+        }
+    }
+    void checkOut(int roomNumber) {
+        if (roomNumber >= 1 && roomNumber <= numRooms) {
+            rooms[roomNumber - 1].checkOut();
+        } else {
+            cout << "Invalid room number\n";
+        }
+    }
+};
+
+void displayMenu() {
+    cout << "\nHotel Management System Menu:\n";
+    cout << "1. Display available rooms\n";
+    cout << "2. Check-in guest\n";
+    cout << "3. Check-out guest\n";
+    cout << "4. Exit\n";
+    cout << "Enter your choice: ";
+}
+
+int main() {
+    Hotel hotel(5); // Create a hotel with 5 rooms
+
+    int choice;
+    do {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                hotel.displayRooms();
+                break;
+            case 2: {
+                string name;
+                int age, roomNumber;
+                cout << "Enter guest name: ";
+                cin >> name;
+                cout << "Enter guest age: ";
+                cin >> age;
+                cout << "Enter room number: ";
+                cin >> roomNumber;
+                hotel.checkIn(roomNumber, new Guest(name, age));
+                break;
+            }
+            case 3: {
+                int roomNumber;
+                cout << "Enter room number: ";
+                cin >> roomNumber;
+                hotel.checkOut(roomNumber);
+                break;
+            }
+            case 4:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice\n";
+                break;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
