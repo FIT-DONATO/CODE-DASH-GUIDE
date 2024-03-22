@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Forward declarations
+class Tour;
+
+// Class representing a destination
+class Destination {
+private:
+    string name;
+    string description;
+
+public:
+    // Constructor
+    Destination(string name, string description) : name(name), description(description) {}
+
+    // Getter for name
+    string getName() const {
+        return name;
+    }
+
+    // Getter for description
+    string getDescription() const {
+        return description;
+    }
+};
+
+// Class representing a tour
+class Tour {
+private:
+    string name;
+    string description;
+    vector<Destination> destinations;
+
+public:
+    // Constructor
+    Tour(string name, string description) : name(name), description(description) {}
+
+    // Getter for name
+    string getName() const {
+        return name;
+    }
+
+    // Getter for description
+    string getDescription() const {
+        return description;
+    }
+
+    // Add destination to tour
+    void addDestination(const Destination& destination) {
+        destinations.push_back(destination);
+    }
+
+    // Display tour details
+    void displayDetails() const {
+        cout << "Tour: " << name << endl;
+        cout << "Description: " << description << endl;
+        cout << "Destinations:" << endl;
+        for (const Destination& dest : destinations) {
+            cout << "- " << dest.getName() << ": " << dest.getDescription() << endl;
+        }
+    }
+};
+
+int main() {
+    // Create some destinations
+    Destination destination1("Paris", "The capital city of France known for its art, fashion, and culture.");
+    Destination destination2("Rome", "The capital city of Italy known for its rich history and ancient ruins.");
+    Destination destination3("Tokyo", "The capital city of Japan known for its modern technology and vibrant culture.");
+
+    // Create some tours
+    Tour tour1("European Adventure", "Explore the highlights of Europe.");
+    tour1.addDestination(destination1);
+    tour1.addDestination(destination2);
+
+    Tour tour2("Japan Discovery", "Discover the wonders of Japan.");
+    tour2.addDestination(destination3);
+
+    // Display tour details
+    tour1.displayDetails();
+    cout << endl;
+    tour2.displayDetails();
+
+    return 0;
+}
