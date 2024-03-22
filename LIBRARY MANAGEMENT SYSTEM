@@ -1,0 +1,83 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Class representing a book
+class Book {
+private:
+    string title;
+    string author;
+    int year;
+
+public:
+    Book(string title, string author, int year) : title(title), author(author), year(year) {}
+
+    string getTitle() const {
+        return title;
+    }
+
+    string getAuthor() const {
+        return author;
+    }
+
+    int getYear() const {
+        return year;
+    }
+};
+
+// Class representing a library
+class Library {
+public:
+    void addBook(const Book& book) {
+        // Add book to the library
+        cout << "Book added successfully." << endl;
+    }
+
+    void displayBooks() const {
+        // Display all books in the library
+        cout << "Displaying all books in the library..." << endl;
+    }
+
+    // Add other functionalities such as updateBook, deleteBook, etc.
+};
+
+int main() {
+    cout << "Welcome to the Library Management System!" << endl;
+
+    Library library;
+
+    while (true) {
+        cout << "\nMenu:\n1. Add Book\n2. Display Books\n3. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string title, author;
+                int year;
+                cout << "Enter book title: ";
+                cin.ignore();
+                getline(cin, title);
+                cout << "Enter book author: ";
+                getline(cin, author);
+                cout << "Enter publication year: ";
+                cin >> year;
+                Book newBook(title, author, year);
+                library.addBook(newBook);
+                break;
+            }
+            case 2:
+                library.displayBooks();
+                break;
+            case 3:
+                cout << "Exiting...";
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
