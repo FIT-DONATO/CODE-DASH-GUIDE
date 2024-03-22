@@ -1,0 +1,148 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Class representing a travel destination
+class Destination {
+private:
+    string name;
+    string description;
+
+public:
+    // Constructor
+    Destination(string name, string description) : name(name), description(description) {}
+
+    // Getter for name
+    string getName() const {
+        return name;
+    }
+
+    // Getter for description
+    string getDescription() const {
+        return description;
+    }
+
+    // Update destination description
+    void updateDescription(string newDescription) {
+        description = newDescription;
+    }
+};
+
+// Class representing a travel agency
+class TravelAgency {
+private:
+    vector<Destination> destinations;
+
+public:
+    // Create a new destination
+    void createDestination(string name, string description) {
+        destinations.push_back(Destination(name, description));
+        cout << "Destination added successfully." << endl;
+    }
+
+    // Read information about all destinations
+    void readDestinations() const {
+        cout << "Available destinations:" << endl;
+        for (const Destination& dest : destinations) {
+            cout << "Name: " << dest.getName() << ", Description: " << dest.getDescription() << endl;
+        }
+    }
+
+    // Update description of a destination
+    void updateDestination(string name, string newDescription) {
+        auto it = find_if(destinations.begin(), destinations.end(), [&](const Destination& dest) {
+            return dest.getName() == name;
+        });
+        if (it != destinations.end()) {
+            it->updateDescription(newDescription);
+            cout << "Destination updated successfully." << endl;
+        } else {
+            cout << "Destination not found." << endl;
+        }
+    }
+
+    // Delete a destination
+    void deleteDestination(string name) {
+        auto it = find_if(destinations.begin(), destinations.end(), [&](const Destination& dest) {
+            return dest.getName() == name;
+        });
+        if (it != destinations.end()) {
+            destinations.erase(it);
+            cout << "Destination deleted successfully." << endl;
+        } else {
+            cout << "Destination not found." << endl;
+        }
+    }
+
+    // Book a trip to a destination
+    void bookTrip(string name) {
+        auto it = find_if(destinations.begin(), destinations.end(), [&](const Destination& dest) {
+            return dest.getName() == name;
+        });
+        if (it != destinations.end()) {
+            cout << "Trip to " << name << " booked successfully." << endl;
+        } else {
+            cout << "Destination not found." << endl;
+        }
+    }
+};
+
+int main() {
+    TravelAgency agency;
+
+    cout << "Welcome to our travel agency!" << endl;
+
+    int choice;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add Destination\n";
+        cout << "2. Read Destinations\n";
+        cout << "3. Update Destination Description\n";
+        cout << "4. Delete Destination\n";
+        cout << "5. Book a Trip\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        string name, description;
+        switch (choice) {
+            case 1:
+                cout << "Enter destination name: ";
+                cin >> name;
+                cout << "Enter destination description: ";
+                cin >> description;
+                agency.createDestination(name, description);
+                break;
+            case 2:
+                agency.readDestinations();
+                break;
+            case 3:
+                cout << "Enter destination name: ";
+                cin >> name;
+                cout << "Enter new description: ";
+                cin >> description;
+                agency.updateDestination(name, description);
+                break;
+            case 4:
+                cout << "Enter destination name: ";
+                cin >> name;
+                agency.deleteDestination(name);
+                break;
+            case 5:
+                cout << "Enter destination name to book a trip: ";
+                cin >> name;
+                agency.bookTrip(name);
+                break;
+            case 6:
+                cout << "Exiting program..." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 6);
+
+    return 0;
+}
