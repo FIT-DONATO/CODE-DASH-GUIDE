@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Forward declarations
+class Course;
+
+// Class representing a student
+class Student {
+private:
+    string name;
+    int id;
+    vector<Course*> courses;
+
+public:
+    // Constructor
+    Student(string name, int id) : name(name), id(id) {}
+
+    // Getter for name
+    string getName() const {
+        return name;
+    }
+
+    // Getter for ID
+    int getID() const {
+        return id;
+    }
+
+    // Enroll in a course
+    void enroll(Course* course) {
+        courses.push_back(course);
+    }
+
+    // Display enrolled courses
+    void displayCourses() const {
+        cout << "Courses enrolled by " << name << " (ID: " << id << "):" << endl;
+        for (Course* course : courses) {
+            cout << "- " << course->getName() << endl;
+        }
+    }
+};
+
+// Class representing a course
+class Course {
+private:
+    string name;
+    int courseId;
+
+public:
+    // Constructor
+    Course(string name, int courseId) : name(name), courseId(courseId) {}
+
+    // Getter for name
+    string getName() const {
+        return name;
+    }
+
+    // Getter for course ID
+    int getCourseID() const {
+        return courseId;
+    }
+};
+
+int main() {
+    // Create some students
+    Student student1("Alice", 1);
+    Student student2("Bob", 2);
+
+    // Create some courses
+    Course course1("Math", 101);
+    Course course2("Physics", 102);
+    Course course3("Biology", 103);
+
+    // Enroll students in courses
+    student1.enroll(&course1);
+    student1.enroll(&course2);
+    student2.enroll(&course2);
+    student2.enroll(&course3);
+
+    // Display courses enrolled by students
+    student1.displayCourses();
+    cout << endl;
+    student2.displayCourses();
+
+    return 0;
+}
