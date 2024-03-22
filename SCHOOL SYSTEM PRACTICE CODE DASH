@@ -1,0 +1,263 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct Student {
+    // Address
+    Student* next = nullptr;
+    Student* prev = nullptr;
+    // Informations
+    string name, course;
+    int age = 0, id = 0;
+    float grades[5] = { 0 };
+};
+
+void MainMenu(int&);
+Student* AddNewStudent();
+void AddGrades(Student*);
+void CalculateGrades(Student*);
+void UpdateStudent(Student*);
+void CheckStudentList(Student*);
+void DeleteStudent(Student*);
+
+void Greeting() {
+    string name;
+    char gender;
+
+    cout << "WELCOME TEACHER!" << endl;
+    cout << "\n";
+
+    cout << "What is your name?" << endl;
+    cout << "NAME: ";
+    getline(cin, name); 
+    cout << "\n";
+
+    cout << "What is your gender? [M/F]" << endl;
+    cout << "GENDER: ";
+    cin >> gender;
+    cout << "\n";
+
+    if (gender == 'M' || gender == 'm') {
+        cout << "Welcome Mr. " << name << "!" << endl;
+    }
+    else if (gender == 'F' || gender == 'f') {
+        cout << "Welcome Ms. " << name << "!" << endl;
+    }
+
+    cout << "\n";
+}
+
+void MainMenu(int& choice) {
+    cout << "==========MENU=========" << endl;
+    cout << "1. Add Student\n"
+        << "2. Add Grades\n"
+        << "3. Calculate Grades\n"
+        << "4. Update Student\n"
+        << "5. Check Student List\n"
+        << "6. Delete Student\n"
+        << "7. Exit\n";
+    cout << "=======================" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    system("cls");
+}
+
+Student* AddNewStudent() {
+    Student* studentInformation = new Student;
+
+    cout << "-- Student Information Form --\n\n";
+    cout << "Name: ";
+    cin.ignore();
+    getline(cin, studentInformation->name);
+    cout << "Age: ";
+    cin >> studentInformation->age;
+    cout << "Course: ";
+    cin >> studentInformation->course;
+    cout << "Provided ID by School: ";
+    cin >> studentInformation->id;
+
+    return studentInformation;
+}
+
+void AddGrades(Student* student) {
+    cout << "-- Add Grades --" << endl;
+    for (int i = 0; i < 5; ++i) {
+        cout << "Enter grade for subject " << i + 1 << ": ";
+        cin >> student->grades[i];
+    }
+}
+
+void CalculateGrades(Student* student) {
+    float total = 0;
+    for (int i = 0; i < 5; ++i) {
+        total += student->grades[i];
+    }
+    float average = total / 5.0;
+    cout << "Average Grade for " << student->name << " is: " << average << endl;
+}
+
+void UpdateStudent(Student* student) {
+    cout << "-- Update Student --" << endl;
+    char choice;
+    cout << "Do you want to update student name? (Y/N): ";
+    cin >> choice;
+    if (choice == 'Y' || choice == 'y') {
+        cout << "Enter new name: ";
+        getline(cin, student->name);
+    }
+
+    cout << "Do you want to update student age? (Y/N): ";
+    cin >> choice;
+    if (choice == 'Y' || choice == 'y') {
+        cout << "Enter new age: ";
+        cin >> student->age;
+    }
+
+    cout << "Do you want to update student course? (Y/N): ";
+    cin >> choice;
+    if (choice == 'Y' || choice == 'y') {
+        cout << "Enter new course: ";
+        cin >> student->course;
+    }
+
+    cout << "Do you want to update student ID? (Y/N): ";
+    cin >> choice;
+    if (choice == 'Y' || choice == 'y') {
+        cout << "Enter new ID: ";
+        cin >> student->id;
+    }
+
+    cout << "Student information updated successfully!" << endl;
+}
+
+void CheckStudentList(Student* head) {
+    cout << "-- Student List --" << endl;
+    Student* temp = head;
+    while (temp != nullptr) {
+        cout << "Name: " << temp->name << ", ID: " << temp->id << endl;
+        temp = temp->next;
+    }
+}
+
+void DeleteStudent(Student*& head, int id) {
+    Student* temp = head;
+    if (temp != nullptr && temp->id == id) {
+        head = temp->next;
+        delete temp;
+        return;
+    }
+    while (temp != nullptr && temp->id != id) {
+        temp = temp->next;
+    }
+    if (temp == nullptr) return;
+    temp->prev->next = temp->next;
+    if (temp->next != nullptr) {
+        temp->next->prev = temp->prev;
+    }
+    delete temp;
+}
+
+int main() {
+    int choice;
+    Student* head = nullptr;
+
+    Greeting();
+    system("pause");
+    system("cls");
+
+    do {
+        MainMenu(choice);
+
+        switch (choice) {
+        case 1: {
+            Student* newStudent = AddNewStudent();
+            if (head == nullptr) {
+                head = newStudent;
+            }
+            else {
+                Student* temp = head;
+                while (temp->next != nullptr) {
+                    temp = temp->next;
+                }
+                temp->next = newStudent;
+                newStudent->prev = temp;
+            }
+            break;
+        }
+        case 2: {
+            int studentId;
+            cout << "Enter student ID to add grades: ";
+            cin >> studentId;
+            Student* temp = head;
+            while (temp != nullptr && temp->id != studentId) {
+                temp = temp->next;
+            }
+            if (temp != nullptr) {
+                AddGrades(temp);
+            }
+            else {
+                cout << "Student with ID " << studentId << " not found!" << endl;
+            }
+            break;
+        }
+        case 3: {
+            int studentId;
+            cout << "Enter student ID to calculate grades: ";
+            cin >> studentId;
+            Student* temp = head;
+            while (temp != nullptr && temp->id != studentId) {
+                temp = temp->next;
+            }
+            if (temp != nullptr) {
+                CalculateGrades(temp);
+            }
+            else {
+                cout << "Student with ID " << studentId << " not found!" << endl;
+            }
+            break;
+        }
+        case 4: {
+            int studentId;
+            cout << "Enter student ID to update: ";
+            cin >> studentId;
+            Student* temp = head;
+            while (temp != nullptr && temp->id != studentId) {
+                temp = temp->next;
+            }
+            if (temp != nullptr) {
+                UpdateStudent(temp);
+            }
+            else {
+                cout << "Student with ID " << studentId << " not found!" << endl;
+            }
+            break;
+        }
+        case 5: {
+            CheckStudentList(head);
+            break;
+        }
+        case 6: {
+            int studentId;
+            cout << "Enter student ID to delete: ";
+            cin >> studentId;
+            DeleteStudent(head, studentId);
+            break;
+        }
+        case 7: {
+            return 0;
+        }
+        default: {
+            cout << "Invalid choice! Please enter again." << endl;
+            break;
+        }
+        }
+        system("pause");
+        system("cls");
+    } while (true);
+
+    return 0;
+}
+
+
+
