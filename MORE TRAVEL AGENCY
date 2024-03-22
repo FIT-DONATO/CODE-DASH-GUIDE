@@ -1,0 +1,225 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Vehicle {
+protected:
+    string name;
+    int capacity;
+public:
+    Vehicle(string n, int cap) : name(n), capacity(cap) {}
+    virtual void display() = 0;
+    string getName() const { return name; }
+    int getCapacity() const { return capacity; }
+};
+
+class Plane : public Vehicle {
+public:
+    Plane(string n, int cap) : Vehicle(n, cap) {}
+    void display() override {
+        cout << "Plane Model: " << name << ", Capacity: " << capacity << endl;
+    }
+};
+
+class Bus : public Vehicle {
+public:
+    Bus(string n, int cap) : Vehicle(n, cap) {}
+    void display() override {
+        cout << "Bus Brand: " << name << ", Seating Capacity: " << capacity << endl;
+    }
+};
+
+class Boat : public Vehicle {
+public:
+    Boat(string n, int cap) : Vehicle(n, cap) {}
+    void display() override {
+        cout << "Boat Type: " << name << ", Passenger Capacity: " << capacity << endl;
+    }
+};
+
+class Booking {
+private:
+    string vehicleName;
+    int passengers;
+public:
+    Booking(string name, int pass) : vehicleName(name), passengers(pass) {}
+    void display() {
+        cout << "Vehicle: " << vehicleName << ", Passengers: " << passengers << endl;
+    }
+};
+
+class Admin {
+private:
+    Vehicle* vehicles[100]; // Maximum 100 vehicles
+    int numVehicles;
+public:
+    Admin() : numVehicles(0) {}
+
+    void addVehicle(Vehicle* vehicle) {
+        if (numVehicles < 100) {
+            vehicles[numVehicles++] = vehicle;
+            cout << "Vehicle added successfully!\n";
+        } else {
+            cout << "Cannot add more vehicles. Maximum limit reached.\n";
+        }
+    }
+
+    void viewVehicles() {
+        cout << "Vehicles:\n";
+        for (int i = 0; i < numVehicles; ++i) {
+            vehicles[i]->display();
+        }
+    }
+
+    int getNumVehicles() const {
+        return numVehicles;
+    }
+
+    Vehicle* getVehicle(int index) const {
+        if (index >= 0 && index < numVehicles) {
+            return vehicles[index];
+        }
+        return nullptr;
+    }
+
+    ~Admin() {
+        for (int i = 0; i < numVehicles; ++i) {
+            delete vehicles[i];
+        }
+    }
+};
+
+void makeBooking(Admin& admin) {
+    string vehicleName;
+    int passengers;
+    cout << "Enter vehicle name: ";
+    cin >> vehicleName;
+    cout << "Enter number of passengers: ";
+    cin >> passengers;
+
+    // Check if the vehicle exists
+    bool found = false;
+    for (int i = 0; i < admin.getNumVehicles(); ++i) {
+        if (admin.getVehicle(i)->getName() == vehicleName) {
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        Booking booking(vehicleName, passengers);
+        cout << "Booking made successfully:\n";
+        booking.display();
+    } else {
+        cout << "Vehicle not found!\n";
+    }
+}
+
+void userMenu(Admin& admin) {
+    int choice;
+    while (true) {
+        cout << "\nUser Menu:\n";
+        cout << "1. View available travel options\n";
+        cout << "2. Make a booking\n";
+        cout << "3. Go back to the main menu\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                admin.viewVehicles();
+                break;
+            case 2:
+                makeBooking(admin);
+                break;
+            case 3:
+                return;
+            default:
+                cout << "Invalid choice\n";
+                break;
+        }
+    }
+}
+
+void adminMenu(Admin& admin) {
+    int choice;
+    while (true) {
+        cout << "\nAdmin Menu:\n";
+        cout << "1. Add vehicle\n";
+        cout << "2. View vehicles\n";
+        cout << "3. Go back to the main menu\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int vehicleType;
+                string name;
+                int capacity;
+                cout << "\nAdd Vehicle:\n";
+                cout << "1. Plane\n";
+                cout << "2. Bus\n";
+                cout << "3. Boat\n";
+                cout << "Enter vehicle type: ";
+                cin >> vehicleType;
+                cout << "Enter name: ";
+                cin >> name;
+                cout << "Enter capacity: ";
+                cin >> capacity;
+
+                switch (vehicleType) {
+                    case 1:
+                        admin.addVehicle(new Plane(name, capacity));
+                        break;
+                    case 2:
+                        admin.addVehicle(new Bus(name, capacity));
+                        break;
+                    case 3:
+                        admin.addVehicle(new Boat(name, capacity));
+                        break;
+                    default:
+                        cout << "Invalid choice\n";
+                        break;
+                }
+                break;
+            }
+            case 2:
+                admin.viewVehicles();
+                break;
+            case 3:
+                return;
+            default:
+                cout << "Invalid choice\n";
+                break;
+        }
+    }
+}
+
+int main() {
+    Admin admin;
+    while (true) {
+        int userType;
+        cout << "Welcome to Travel Agency Program\n";
+        cout << "-------------------------------\n";
+        cout << "Are you a user or an admin?\n";
+        cout << "1. User\n";
+        cout << "2. Admin\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> userType;
+
+        if (userType == 1) {
+            userMenu(admin);
+        } else if (userType == 2) {
+            adminMenu(admin);
+        } else if (userType == 3) {
+            cout << "Exiting...\n";
+            break;
+        } else {
+            cout << "Invalid choice\n";
+        }
+    }
+
+    return 0;
+}
