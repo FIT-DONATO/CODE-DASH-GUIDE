@@ -1,0 +1,165 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Class representing an employee
+class Employee {
+private:
+    string name;
+    int id;
+    string department;
+
+public:
+    // Default constructor
+    Employee() : name(""), id(0), department("") {}
+
+    Employee(string name, int id, string department) : name(name), id(id), department(department) {}
+
+    string getName() const {
+        return name;
+    }
+
+    int getID() const {
+        return id;
+    }
+
+    string getDepartment() const {
+        return department;
+    }
+
+    void updateDepartment(string newDepartment) {
+        department = newDepartment;
+    }
+};
+
+// Class representing Personnel Management System
+class PersonnelManagementSystem {
+private:
+    Employee* employees;
+    int capacity;
+    int size;
+
+public:
+    PersonnelManagementSystem() : employees(nullptr), capacity(0), size(0) {}
+
+    ~PersonnelManagementSystem() {
+        delete[] employees;
+    }
+
+    void addEmployee(string name, int id, string department) {
+        if (size >= capacity) {
+            resize();
+        }
+        employees[size++] = Employee(name, id, department);
+        cout << "Employee added successfully." << endl;
+    }
+
+    void viewEmployees() const {
+        cout << "Employee Details:" << endl;
+        for (int i = 0; i < size; ++i) {
+            cout << "Name: " << employees[i].getName() << ", ID: " << employees[i].getID() << ", Department: " << employees[i].getDepartment() << endl;
+        }
+    }
+
+    void updateEmployeeDepartment(int id, string newDepartment) {
+        int index = findEmployeeIndex(id);
+        if (index != -1) {
+            employees[index].updateDepartment(newDepartment);
+            cout << "Employee department updated successfully." << endl;
+        } else {
+            cout << "Employee not found." << endl;
+        }
+    }
+
+    void deleteEmployee(int id) {
+        int index = findEmployeeIndex(id);
+        if (index != -1) {
+            for (int i = index; i < size - 1; ++i) {
+                employees[i] = employees[i + 1];
+            }
+            size--;
+            cout << "Employee deleted successfully." << endl;
+        } else {
+            cout << "Employee not found." << endl;
+        }
+    }
+
+private:
+    void resize() {
+        capacity = (capacity == 0) ? 1 : capacity * 2;
+        Employee* newEmployees = new Employee[capacity];
+        for (int i = 0; i < size; ++i) {
+            newEmployees[i] = employees[i];
+        }
+        delete[] employees;
+        employees = newEmployees;
+    }
+
+    int findEmployeeIndex(int id) const {
+        for (int i = 0; i < size; ++i) {
+            if (employees[i].getID() == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+};
+
+int main() {
+    cout << "Welcome to the Personnel Management System!" << endl;
+
+    PersonnelManagementSystem pms;
+
+    while (true) {
+        cout << "\nMenu:\n1. Add Employee\n2. View Employees\n3. Update Employee Department\n4. Delete Employee\n5. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string name, department;
+                int id;
+                cout << "Enter employee name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter employee ID: ";
+                cin >> id;
+                cout << "Enter employee department: ";
+                cin.ignore();
+                getline(cin, department);
+                pms.addEmployee(name, id, department);
+                break;
+            }
+            case 2:
+                pms.viewEmployees();
+                break;
+            case 3: {
+                int id;
+                string newDepartment;
+                cout << "Enter employee ID: ";
+                cin >> id;
+                cout << "Enter new department: ";
+                cin.ignore();
+                getline(cin, newDepartment);
+                pms.updateEmployeeDepartment(id, newDepartment);
+                break;
+            }
+            case 4: {
+                int id;
+                cout << "Enter employee ID to delete: ";
+                cin >> id;
+                pms.deleteEmployee(id);
+                break;
+            }
+            case 5:
+                cout << "Exiting...";
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
