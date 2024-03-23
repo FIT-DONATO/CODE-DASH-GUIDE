@@ -1,0 +1,193 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Pokemon {
+private:
+    string name;
+    string type;
+    int level;
+public:
+    Pokemon(string n, string t, int l) : name(n), type(t), level(l) {}
+    string getName() const { return name; }
+    string getType() const { return type; }
+    int getLevel() const { return level; }
+    void display() const {
+        cout << "Name: " << name << ", Type: " << type << ", Level: " << level << endl;
+    }
+    void update(string n, string t, int l) {
+        name = n;
+        type = t;
+        level = l;
+        cout << "Pokemon updated\n";
+    }
+};
+
+class Trainer {
+private:
+    string name;
+    Pokemon* pokemons[6]; // Maximum 6 pokemons
+    int numPokemons;
+public:
+    Trainer(string n) : name(n), numPokemons(0) {}
+    string getName() const { return name; }
+    void addPokemon(Pokemon* pokemon) {
+        if (numPokemons < 6) {
+            pokemons[numPokemons++] = pokemon;
+            cout << "Added Pokemon: " << pokemon->getName() << " to Trainer: " << name << endl;
+        } else {
+            cout << "Cannot add more pokemons. Maximum limit reached.\n";
+        }
+    }
+    void displayPokemons() const {
+        cout << "Trainer " << name << "'s Pokemons:\n";
+        for (int i = 0; i < numPokemons; ++i) {
+            pokemons[i]->display();
+        }
+    }
+    void fight(Trainer* opponent) {
+        cout << "Fight between Trainer " << name << " and Trainer " << opponent->getName() << " begins!\n";
+        // Simulate the fight (for simplicity, just display the message)
+        cout << "Trainer " << name << " wins the fight!\n";
+    }
+    void updatePokemon(string name, string newName, string type, int level) {
+        for (int i = 0; i < numPokemons; ++i) {
+            if (pokemons[i]->getName() == name) {
+                pokemons[i]->update(newName, type, level);
+                return;
+            }
+        }
+        cout << "Pokemon not found\n";
+    }
+    void deletePokemon(string name) {
+        for (int i = 0; i < numPokemons; ++i) {
+            if (pokemons[i]->getName() == name) {
+                cout << "Deleted Pokemon: " << pokemons[i]->getName() << endl;
+                delete pokemons[i];
+                // Shift remaining pokemons to fill the gap
+                for (int j = i; j < numPokemons - 1; ++j) {
+                    pokemons[j] = pokemons[j + 1];
+                }
+                numPokemons--;
+                return;
+            }
+        }
+        cout << "Pokemon not found\n";
+    }
+};
+
+void displayMenu(bool isAdmin) {
+    cout << "\nPokemon Management System Menu:\n";
+    cout << "1. View Pokemons\n";
+    cout << "2. Add Pokemon\n";
+    cout << "3. Fight\n";
+    if (isAdmin) {
+        cout << "4. Update Pokemon\n";
+        cout << "5. Delete Pokemon\n";
+    }
+    cout << "6. Exit\n";
+    cout << "Enter your choice: ";
+}
+
+int main() {
+    Trainer ash("Ash");
+    Trainer misty("Misty");
+
+    Pokemon pikachu("Pikachu", "Electric", 25);
+    Pokemon charmander("Charmander", "Fire", 20);
+    Pokemon squirtle("Squirtle", "Water", 22);
+    Pokemon bulbasaur("Bulbasaur", "Grass", 18);
+
+    ash.addPokemon(&pikachu);
+    ash.addPokemon(&charmander);
+    misty.addPokemon(&squirtle);
+    misty.addPokemon(&bulbasaur);
+
+    char userType;
+    do {
+        bool isAdmin = false;
+        cout << "Welcome to the Pokemon Management System\n";
+        cout << "Are you a user (u) or an admin (a)? ";
+        cin >> userType;
+        if (userType == 'a') {
+            isAdmin = true;
+        }
+
+        int choice;
+        do {
+            displayMenu(isAdmin);
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    ash.displayPokemons();
+                    misty.displayPokemons();
+                    break;
+                case 2: {
+                    string name, type;
+                    int level;
+                    cout << "Enter Pokemon name: ";
+                    cin >> name;
+                    cout << "Enter Pokemon type: ";
+                    cin >> type;
+                    cout << "Enter Pokemon level: ";
+                    cin >> level;
+                    ash.addPokemon(new Pokemon(name, type, level));
+                    break;
+                }
+                case 3: {
+                    string opponentName;
+                    cout << "Enter opponent trainer name: ";
+                    cin >> opponentName;
+                    if (opponentName == misty.getName()) {
+                        ash.fight(&misty);
+                    } else if (opponentName == ash.getName()) {
+                        misty.fight(&ash);
+                    } else {
+                        cout << "Trainer not found!\n";
+                    }
+                    break;
+                }
+                case 4:
+                    if (isAdmin) {
+                        string pokemonName, newName, newType;
+                        int newLevel;
+                        cout << "Enter the name of the pokemon you want to update: ";
+                        cin >> pokemonName;
+                        cout << "Enter new name: ";
+                        cin >> newName;
+                        cout << "Enter new type: ";
+                        cin >> newType;
+                        cout << "Enter new level: ";
+                        cin >> newLevel;
+                        ash.updatePokemon(pokemonName, newName, newType, newLevel);
+                    } else {
+                        cout << "Invalid choice\n";
+                    }
+                    break;
+                case 5:
+                    if (isAdmin) {
+                        string pokemonName;
+                        cout << "Enter the name of the pokemon you want to delete: ";
+                        cin >> pokemonName;
+                        ash.deletePokemon(pokemonName);
+                    } else {
+                        cout << "Invalid choice\n";
+                    }
+                    break;
+                case 6:
+                    cout << "Exiting...\n";
+                    break;
+                default:
+                    cout << "Invalid choice\n";
+                    break;
+            }
+        } while (choice != 6);
+
+        cout << "Do you want to continue? (y/n): ";
+        cin >> userType;
+    } while (userType == 'y' || userType == 'Y');
+
+    return 0;
+}
